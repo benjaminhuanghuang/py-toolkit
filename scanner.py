@@ -1,3 +1,7 @@
+'''
+    Usage:
+        python scanner.py -H 10.50.60.125 -p 21,1720
+'''
 import optparse
 from socket import *
 from threading import *
@@ -46,7 +50,7 @@ def main():
     parser.add_option('-p', dest='tgtPort', type='string', help='specify target port[s] separated by comma')
     (options, args) = parser.parse_args()
     tgtHost = options.tgtHost
-    tgtPorts = str(options.tgtPort).split(', ')
+    tgtPorts = str(options.tgtPort).split(',')
 
     if (tgtHost == None) or (tgtPorts[0] == None):
         print parser.usage

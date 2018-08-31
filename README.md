@@ -14,7 +14,7 @@
     
     $virtualenv venv2
 
-* Step 3: start your python 3 virtual environment:
+* Step 3: start your python virtual environment:
     
     $source venv2/bin/activate
 
@@ -22,3 +22,7 @@
     
     $pip install  -r requirements.txt
 
+# Setup for Python 3.x
+```
+    virtualenv --system-site-packages -p python3 venv3
+```

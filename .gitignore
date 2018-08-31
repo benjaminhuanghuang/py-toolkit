@@ -58,3 +58,5 @@ venv
 /cover/
 
 /venv2/
+venv3/
+*.xlsx

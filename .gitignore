@@ -59,4 +59,6 @@ venv
 
 /venv2/
 venv3/
+
 *.xlsx
+log.txt

@@ -68,9 +68,8 @@ def statistics(wb):
         sheet_dismissed, STUDENT_EMAIL_COL_IN_DISMISSED_SHEETS[index])
     students_count = row_count - 1
     dismissed_students_count += students_count
-
     print("There are {} students in {}".format(students_count, sheet_name))
-
+    
   print("There are {} students were dismissed".format(dismissed_students_count))
 
 

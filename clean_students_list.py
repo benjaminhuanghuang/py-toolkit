@@ -1,4 +1,7 @@
-
+'''
+  Read data in FILE_NAME, creat a new sheet NEW_ALL_STUDENTS_SHEET,
+  Then save to a new file NEW_FILE_NAME
+'''
 import os
 import openpyxl
 
@@ -81,13 +84,14 @@ if __name__ == "__main__":
   # copy the field names in the first row
   column_count_all = sheet_all.max_column
   for col in range(1, column_count_all + 1):
-    sheet_result.cell(row=1, column=col,
-                      value=sheet_all.cell(row=1, column=col).value)
+    header = sheet_all.cell(row=1, column=col).value
+    sheet_result.cell(row=1, column=col, value=header)
 
   row_result = 2
   # filter the students infor
   for row in range(2, sheet_all.max_row + 1):
-    userEmail = sheet_all.cell(row=row, column=STUDENT_EMAIL_COL_IN_ALL_STUDENTS_SHEET).value
+    userEmail = sheet_all.cell(
+        row=row, column=STUDENT_EMAIL_COL_IN_ALL_STUDENTS_SHEET).value
     if userEmail and isDismissed(userEmail, wb):
       continue
     for col in range(1, column_count_all + 1):

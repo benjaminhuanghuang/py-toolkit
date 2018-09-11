@@ -6,6 +6,8 @@ import smtplib
 # Import the email modules we'll need
 from email.mime.text import MIMEText
 
+FILE_NAME = '2018_all_students.xlsx'
+
 
 COL_NAME = 2
 COL_EMAIL = 3
@@ -14,7 +16,7 @@ PATH_EMAIL_TEMPLATE = ''
 
 
 if __name__ == "__main__":
-  wb = openpyxl.load_workbook('students.xlsx')
+  wb = openpyxl.load_workbook(FILE_NAME)
   sheet_students = wb['students']
   
   row_count = sheet_students.max_row

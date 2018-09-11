@@ -11,7 +11,7 @@ NEW_FILE_NAME = 'students_new.xlsx'
 ALL_STUDENTS_SHEET = '總名單'
 NEW_ALL_STUDENTS_SHEET = 'all_students'
 
-STUDENT_EMAIL_COL_IN_ALL_STUDENTS_SHEET = 4
+EMAIL_COL_IN_ALL_STUDENTS_SHEET = 4
 
 DISMISSED_STUDENTS_SHEETS = [
     '2018 開除名單',
@@ -19,21 +19,21 @@ DISMISSED_STUDENTS_SHEETS = [
     '2015新生開除名單'
 ]
 
-STUDENT_EMAIL_COL_IN_DISMISSED_SHEETS = [
+EMAIL_COL_IN_DISMISSED_SHEETS = [
     6,
     2,
     2
 ]
 
 
-def isDismissed(studentEmail, wb):
+def isDismissed(studentName, studentEmail, wb):
   for index in range(len(DISMISSED_STUDENTS_SHEETS)):
     sheet_name = DISMISSED_STUDENTS_SHEETS[index]
     sheet_dismissed = wb[sheet_name]
     row_count = sheet_dismissed.max_row
     for row in range(2, row_count + 1):
-      if sheet_dismissed.cell(row=row, column=STUDENT_EMAIL_COL_IN_DISMISSED_SHEETS[index]).value == studentEmail:
-        print('Student {} is dismissed in {}'.format(studentEmail, sheet_name))
+      if sheet_dismissed.cell(row=row, column=EMAIL_COL_IN_DISMISSED_SHEETS[index]).value == studentEmail:
+        print('Student {}, {} was dismissed in {}'.format(studentName, studentEmail, sheet_name))
         return True
 
   return False
@@ -55,7 +55,7 @@ def statistics(wb):
   sheet_all = wb[ALL_STUDENTS_SHEET]
   # Print statistics information
   row_count_all = getRowCount(
-      sheet_all, STUDENT_EMAIL_COL_IN_ALL_STUDENTS_SHEET)
+      sheet_all, EMAIL_COL_IN_ALL_STUDENTS_SHEET)
   all_students_count = row_count_all - 1
   print("There are {} students in {}".format(
       all_students_count, ALL_STUDENTS_SHEET))
@@ -65,11 +65,11 @@ def statistics(wb):
     sheet_name = DISMISSED_STUDENTS_SHEETS[index]
     sheet_dismissed = wb[sheet_name]
     row_count = getRowCount(
-        sheet_dismissed, STUDENT_EMAIL_COL_IN_DISMISSED_SHEETS[index])
+        sheet_dismissed, EMAIL_COL_IN_DISMISSED_SHEETS[index])
     students_count = row_count - 1
     dismissed_students_count += students_count
     print("There are {} students in {}".format(students_count, sheet_name))
-    
+
   print("There are {} students were dismissed".format(dismissed_students_count))
 
 
@@ -89,9 +89,11 @@ if __name__ == "__main__":
   row_result = 2
   # filter the students infor
   for row in range(2, sheet_all.max_row + 1):
-    userEmail = sheet_all.cell(
-        row=row, column=STUDENT_EMAIL_COL_IN_ALL_STUDENTS_SHEET).value
-    if userEmail and isDismissed(userEmail, wb):
+    studentEmail = sheet_all.cell(
+        row=row, column=EMAIL_COL_IN_ALL_STUDENTS_SHEET).value
+    studentName = sheet_all.cell(
+        row=row, column=EMAIL_COL_IN_ALL_STUDENTS_SHEET-1).value
+    if studentEmail and isDismissed(studentName, studentEmail, wb):
       continue
     for col in range(1, column_count_all + 1):
       sheet_result.cell(row=row_result, column=col,

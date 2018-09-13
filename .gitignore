@@ -61,4 +61,4 @@ venv
 venv3/
 
 *.xlsx
-log.txt
+*.txt

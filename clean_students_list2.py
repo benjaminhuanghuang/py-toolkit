@@ -5,25 +5,22 @@
 import os
 import openpyxl
 
-FILE_NAME = '2018_all_students.xlsx'
-NEW_FILE_NAME = 'students_new.xlsx'
+FILE_NAME = 'students_new.xlsx'
+NEW_FILE_NAME = 'students_new2.xlsx'
 
-ALL_STUDENTS_SHEET = '總名單'
-NEW_ALL_STUDENTS_SHEET = 'all_students'
+ALL_STUDENTS_SHEET = 'all_students'
+NEW_ALL_STUDENTS_SHEET = 'all_students2'
 
 ID_COL_IN_ALL_STUDENTS_SHEET = 5
 NAME_COL_IN_ALL_STUDENTS_SHEET = 3
 
+
 DISMISSED_STUDENTS_SHEETS = [
-    '2018 開除名單',
-    '2016開除名單',
-    '2015新生開除名單'
+    '2018 Q4修課學號'
 ]
 
 ID_COL_IN_DISMISSED_SHEETS = [
-    5,
-    1,
-    1
+     1
 ]
 
 

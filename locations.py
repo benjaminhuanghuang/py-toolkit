@@ -13,8 +13,8 @@ COL_LNG = 2
 COL_LAT = 3
 
 # The key belongs to RMS developer
-GOOGLE_API_KEY = 'AIzaSyDavRIt8TjnghoIjx8R2SzhFG6AKCj6WGk'
-GOOGLE_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json?address={}&key=AIzaSyDavRIt8TjnghoIjx8R2SzhFG6AKCj6WGk'
+GOOGLE_API_KEY = ''
+GOOGLE_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json?address={}&key='
 
 
 def getCoordinateOfAddress(address):

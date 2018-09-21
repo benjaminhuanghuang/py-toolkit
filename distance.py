@@ -87,15 +87,15 @@ def compareAlgorithem():
 
   start = time.time()
   for i in range(10000):
-    getDistance1(lng1, lat1, lng2, lat2)
+    result = getDistance1(lng1, lat1, lng2, lat2)
   end = time.time()
-  print("Time used by method1: ", end - start)
+  print("Distance is ", result, ", Time used by method1: ", end - start)
   
   start = time.time()
   for i in range(10000):
-    getDistance2(lng1, lat1, lng2, lat2)
+    result = getDistance2(lng1, lat1, lng2, lat2)
   end = time.time()
-  print("Time used by method2: ", end - start)
+  print("Distance is ", result, ", Time used by method2: ", end - start)
   
 
 if __name__ == "__main__":

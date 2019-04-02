@@ -5,7 +5,8 @@ import sys
 import os
 import psycopg2   # pip install psycopg2-binary
 
-Table_Excluded = ['session', 'session_location', 'flyway_schema_history']
+Table_Excluded = ['climate_data','gdpr_amnesty', 'gdpr_datebase', 'gdpr_us_state_dept_scale'
+                  'session', 'session_location', 'session_location_result', 'flyway_schema_history']
 Column_Excluded = ['created_by', 'created_at', 'modified_by', 'modified_at']
 
 

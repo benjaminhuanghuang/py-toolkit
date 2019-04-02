@@ -9,7 +9,7 @@ Table_Excluded = ['climate_data','iso3a','fbi_agency',
                   'gdpr_amnesty', 'gdpr_database', 'gdpr_us_state_dept_scale',
                   'session', 'session_location', 'session_location_result', 'flyway_schema_history']
 
-# Tables = ['hazard']
+Tables = [] #['hazard']
 Column_Excluded = ['created_by', 'created_at', 'modified_by', 'modified_at']
 
 
@@ -33,10 +33,9 @@ def main():
 
   for table in tables_local:
     table_name = table[0]
-    if table_name in Table_Excluded:
-      continue
-    # if table_name in Tables:
-    compareTableData(cursor_local, cursor_dev, table_name)
+    
+    if sholdCompare(table_name):
+      compareTableData(cursor_local, cursor_dev, table_name)
     
   conn_local.close()
   conn_dev.close()
@@ -76,5 +75,13 @@ def compareTableData(cursor_local, cursor_dev, table_name):
         print(">>>>>>>> Table {} row{} column {} in loc is {} .".format(table_name, i,  column_name, rows_local[i][j]))
         print(">>>>>>>> Table {} row{} column {} in dev is {} .".format(table_name,  i,  column_name, rows_dev[i][j]))
       
+def sholdCompare(table_name):
+  if table_name in Table_Excluded:
+    return False
+  if len(Tables) == 0:
+    return True
+  else:
+    return table_name in Tables
+
 if __name__ == "__main__":
 	main()

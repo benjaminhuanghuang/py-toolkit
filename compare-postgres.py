@@ -5,8 +5,11 @@ import sys
 import os
 import psycopg2   # pip install psycopg2-binary
 
-Table_Excluded = ['climate_data','gdpr_amnesty', 'gdpr_datebase', 'gdpr_us_state_dept_scale'
+Table_Excluded = ['climate_data','iso3a','fbi_agency',
+                  'gdpr_amnesty', 'gdpr_database', 'gdpr_us_state_dept_scale',
                   'session', 'session_location', 'session_location_result', 'flyway_schema_history']
+
+# Tables = ['hazard']
 Column_Excluded = ['created_by', 'created_at', 'modified_by', 'modified_at']
 
 
@@ -25,13 +28,14 @@ def main():
   tables_local = cursor_local.fetchall()
   tables_dev = cursor_dev.fetchall()
 
-  print("There are {0} tables in local".format(len(tables_local)))
+  print("There are {0} tables in loc".format(len(tables_local)))
   print("There are {0} tables in dev".format(len(tables_dev)))
 
   for table in tables_local:
     table_name = table[0]
     if table_name in Table_Excluded:
       continue
+    # if table_name in Tables:
     compareTableData(cursor_local, cursor_dev, table_name)
     
   conn_local.close()
@@ -39,28 +43,27 @@ def main():
 
 def compareTableData(cursor_local, cursor_dev, table_name):
   print("#### Comparing Table {}".format(table_name))
-  
   cursor_local.execute("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_NAME = '" + table_name+"'")
   columns_local = cursor_local.fetchall()
   cursor_dev.execute("SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_NAME = '" + table_name+"'")
   columns_dev = cursor_dev.fetchall()
   if(len(columns_local) != len(columns_dev)): 
     print(">>>> Table {} have differnt columns".format(table_name))
-    print(">>>>>>>> Table {} in cocal has {} columns.".format(table_name, len(columns_local)))
+    print(">>>>>>>> Table {} in loc has {} columns.".format(table_name, len(columns_local)))
     print(">>>>>>>> Table {} in dev has {} columns".format(table_name, len(columns_dev)))
     return
 
-  cursor_local.execute("SELECT * FROM " + table_name)
+  cursor_local.execute("SELECT * FROM " + table_name +" order by id")
   rows_local = cursor_local.fetchall()
   
-  cursor_dev.execute("SELECT * FROM " + table_name)
+  cursor_dev.execute("SELECT * FROM " + table_name+" order by id")
   rows_dev = cursor_dev.fetchall()
   # print(">>>>>>>> Table {} in cocal has {} rows.".format(table_name, len(rows_local)))
   # print(">>>>>>>> Table {} in dev has {} rows".format(table_name, len(rows_dev)))
    
   if(len(rows_local) != len(rows_dev)): 
     print(">>>> Table {} have differnt data count".format(table_name))
-    print(">>>>>>>> Table {} in cocal has {} rows.".format(table_name, len(rows_local)))
+    print(">>>>>>>> Table {} in loc has {} rows.".format(table_name, len(rows_local)))
     print(">>>>>>>> Table {} in dev has {} rows".format(table_name, len(rows_dev)))
     return
 
@@ -70,7 +73,7 @@ def compareTableData(cursor_local, cursor_dev, table_name):
       if(column_name in Column_Excluded):
         continue
       if(rows_local[i][j] != rows_dev[i][j]):
-        print(">>>>>>>> Table {} row{} column {} in cocal is {} .".format(table_name, i,  column_name, rows_local[i][j]))
+        print(">>>>>>>> Table {} row{} column {} in loc is {} .".format(table_name, i,  column_name, rows_local[i][j]))
         print(">>>>>>>> Table {} row{} column {} in dev is {} .".format(table_name,  i,  column_name, rows_dev[i][j]))
       
 if __name__ == "__main__":

@@ -60,7 +60,7 @@ if __name__ == "__main__":
     if(email_address):
       message = MIMEMultipart("alternative")
       message["Subject"] = "Hello!"
-      message["From"] = "Panda <sender@gmail.com>"
+      message["From"] = config['DEFAULT']['SENDER']
       message["To"] = name
 
       # Replace emial body

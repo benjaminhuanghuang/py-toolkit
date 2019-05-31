@@ -60,7 +60,7 @@ if __name__ == "__main__":
     if(email_address):
       message = MIMEMultipart("alternative")
       message["Subject"] = "Hello!"
-      message["From"] = "Panda"
+      message["From"] = "Panda <sender@gmail.com>"
       message["To"] = name
 
       # Replace emial body
@@ -70,5 +70,5 @@ if __name__ == "__main__":
       message.attach(textPart)
       message.attach(htmlPart)
 
-      server.sendmail("Panda", email_address, message.as_string())
+      server.sendmail("sender@gmail.com", email_address, message.as_string())
   server.quit()

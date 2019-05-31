@@ -5,11 +5,11 @@ import sys
 import os
 import psycopg2   # pip install psycopg2-binary
 
-Table_Excluded = ['climate_data','iso3a','fbi_agency',
+Table_Excluded = ['iso3a','fbi_agency',
                   'gdpr_amnesty', 'gdpr_database', 'gdpr_us_state_dept_scale',
                   'session', 'session_location', 'session_location_result', 'flyway_schema_history']
 
-Tables = [] #['hazard']
+Tables = ['climate_data'] #['hazard']
 Column_Excluded = ['created_by', 'created_at', 'modified_by', 'modified_at']
 
 

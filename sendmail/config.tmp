@@ -1,0 +1,8 @@
+; config.ini
+[DEFAULT]
+USER = user@gmail.com 
+PASSWORD = pwd
+
+[TEST]
+
+[CI]

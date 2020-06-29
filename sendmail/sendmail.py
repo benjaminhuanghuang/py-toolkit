@@ -94,7 +94,7 @@ if __name__ == "__main__":
       if(email_address):
         mainMessage = MIMEMultipart('mixed')
         mainMessage["Subject"] = config['DEFAULT']['SUBJECT']
-        mainMessage["From"] = config['DEFAULT']['SENDER']
+        mainMessage["From"] = "{} <{}>".format(config['DEFAULT']['SENDER'],config['DEFAULT']['SENDER_EMAIL'])
         mainMessage["To"] = email_address
 
         message = MIMEMultipart('alternative')
@@ -112,7 +112,7 @@ if __name__ == "__main__":
         mainMessage.attach(message)
         mainMessage.attach(attachmentPart)
 
-        server.sendmail(emailAccount, email_address, mainMessage.as_string())
+        server.sendmail(config['DEFAULT']['SENDER_EMAIL'], email_address, mainMessage.as_string())
       
   attachment.close()
 

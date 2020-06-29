@@ -1,2 +1,6 @@
 config.ini
 config.json
+*.xlsx
+template.txt
+template.html
+*.pdf

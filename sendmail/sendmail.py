@@ -2,23 +2,31 @@ import os
 import configparser # python 3
 import openpyxl
 # Import smtplib for the actual sending function
-import smtplib
+import smtplib, ssl
 
+from email import encoders
 # will contain the HTML and plain-text
 from email.mime.text import MIMEText
 # instance combines these into a single message with two alternative rendering options:
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 
-FILE_NAME = 'students_test.xlsx'
-SHEET_NAME = 'students'
-TEXT_TEMPLATE = 'text.txt'
-HTML_TEMPLATE = 'html.txt'
+# the excel sheet contains receivers 
+EXCEL_NAME = 'receivers.xlsx'
+SHEET_NAME = 'receivers'
+
+# template 
+TEXT_TEMPLATE = 'template.txt'
+HTML_TEMPLATE = 'template.html'
+
+# attachment file
+ATTACHMENT = '「香柏木培訓中心」校規_2020.pdf'
 
 # Should enable: Less secure app access
 EMAIL_SERVER = 'smtp.gmail.com'
 
-COL_NAME = 3
-COL_EMAIL = 4
+COL_NAME = 1
+COL_EMAIL = 2
 COL_SCORE = 5
 
 def replaceTemplate(text, name, score):
@@ -35,40 +43,76 @@ if __name__ == "__main__":
   textContent = textFile.read()
   textFile.close()
 
-  # Read students
-  wb = openpyxl.load_workbook(FILE_NAME)
-  sheet_students = wb[SHEET_NAME]
+  # Read receivers
+  wb = openpyxl.load_workbook(EXCEL_NAME)
+  sheet_receivers = wb[SHEET_NAME]
 
-  row_count = sheet_students.max_row
+  row_count = sheet_receivers.max_row
 
-  # Send the message via SMTP server.
-  server = smtplib.SMTP_SSL(EMAIL_SERVER, 465)
   config = configparser.ConfigParser()
   config.read('config.ini')
 
-  username = config['DEFAULT']['USER']
+  emailAccount = config['DEFAULT']['USER']
   password = config['DEFAULT']['PASSWORD']
-  #print(username, password)
-  server.login(username, password)
- 
-  for row in range(2, row_count + 1):
-    # Get students info
-    name = sheet_students.cell(row=row, column=COL_NAME).value
-    email_address = sheet_students.cell(row=row, column=COL_EMAIL).value
-    score = sheet_students.cell(row=row, column=COL_SCORE).value
+  # print(username, password)
+  
+  # Attachment
+  attachmentPart = MIMEBase("application", "octet-stream")
+   # Open PDF file in binary mode
+  with open(ATTACHMENT, "rb") as attachment:
+      # Add file as application/octet-stream
+      # Email client can usually download this automatically as attachment
+      attachmentPart = MIMEBase("application", "octet-stream")
+      attachmentPart.set_payload(attachment.read())
 
-    if(email_address):
-      message = MIMEMultipart("alternative")
-      message["Subject"] = "Hello!"
-      message["From"] = config['DEFAULT']['SENDER']
-      message["To"] = name
+  # Encode file in ASCII characters to send by email    
+  encoders.encode_base64(attachmentPart)
 
-      # Replace emial body
-      textPart = MIMEText(replaceTemplate(textContent, name, score), "plain")
-      htmlPart = MIMEText(replaceTemplate(htmlContent, name, score), "html")
+  # Add header as key/value pair to attachment part
+  attachmentPart.add_header('Content-Disposition','attachment', filename=ATTACHMENT)
+  
 
-      message.attach(textPart)
-      message.attach(htmlPart)
+  # Create a secure SSL context
+  context = ssl.create_default_context()
+  # 465 (SSL required) or 587 (TLS required)
+  with smtplib.SMTP("smtp.gmail.com", 587) as server: 
+    server.ehlo()
+    server.starttls()
+    # Login SMTP server.
+    # Have to enable https://myaccount.google.com/lesssecureapps?pli=1
+    server.login(emailAccount, password)
+    print("Loged in")
+    attachment = open(ATTACHMENT, "rb")
 
-      server.sendmail("sender@gmail.com", email_address, message.as_string())
-  server.quit()
+    # Send the message via SMTP server.
+    for row in range(1, row_count + 1):
+      # Get receiver infor
+      name = sheet_receivers.cell(row=row, column=COL_NAME).value
+      email_address = sheet_receivers.cell(row=row, column=COL_EMAIL).value
+      # score = sheet_receivers.cell(row=row, column=COL_SCORE).value
+      print("Send email to {} {}".format(name, email_address))
+      if(email_address):
+        mainMessage = MIMEMultipart('mixed')
+        mainMessage["Subject"] = config['DEFAULT']['SUBJECT']
+        mainMessage["From"] = config['DEFAULT']['SENDER']
+        mainMessage["To"] = email_address
+
+        message = MIMEMultipart('alternative')
+     
+        # Replace emial body
+        textMessage = textContent.replace("#name#", name)
+        textPart = MIMEText(textMessage, "plain")
+
+        htmlMessage = htmlContent.replace("#name#", name)
+        htmlPart = MIMEText(htmlMessage, "html")
+
+        message.attach(textPart)
+        message.attach(htmlPart)
+
+        mainMessage.attach(message)
+        mainMessage.attach(attachmentPart)
+
+        server.sendmail(emailAccount, email_address, mainMessage.as_string())
+      
+  attachment.close()
+

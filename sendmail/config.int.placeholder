@@ -1,0 +1,10 @@
+; config.ini
+[DEFAULT]
+SUBJECT = 
+EMAIL_ACCOUNT = 
+PASSWORD =
+SENDER =
+SENDER_EMAIL = 
+[TEST]
+
+[CI]

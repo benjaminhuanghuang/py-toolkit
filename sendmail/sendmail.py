@@ -52,7 +52,7 @@ if __name__ == "__main__":
   config = configparser.ConfigParser()
   config.read('config.ini')
 
-  emailAccount = config['DEFAULT']['USER']
+  emailAccount = config['DEFAULT']['EMAIL_ACCOUNT']
   password = config['DEFAULT']['PASSWORD']
   # print(username, password)
   
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     attachment = open(ATTACHMENT, "rb")
 
     # Send the message via SMTP server.
-    for row in range(1, row_count + 1):
+    for row in range(1, 300):
       # Get receiver infor
       name = sheet_receivers.cell(row=row, column=COL_NAME).value
       email_address = sheet_receivers.cell(row=row, column=COL_EMAIL).value

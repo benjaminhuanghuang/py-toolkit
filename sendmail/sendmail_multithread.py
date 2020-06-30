@@ -93,10 +93,10 @@ if __name__ == "__main__":
   attachmentPart = MIMEBase("application", "octet-stream")
    # Open PDF file in binary mode
   with open(ATTACHMENT, "rb") as attachment:
-      # Add file as application/octet-stream
-      # Email client can usually download this automatically as attachment
-      attachmentPart = MIMEBase("application", "octet-stream")
-      attachmentPart.set_payload(attachment.read())
+    # Add file as application/octet-stream
+    # Email client can usually download this automatically as attachment
+    attachmentPart = MIMEBase("application", "octet-stream")
+    attachmentPart.set_payload(attachment.read())
 
   # Encode file in ASCII characters to send by email    
   encoders.encode_base64(attachmentPart)
@@ -109,6 +109,7 @@ if __name__ == "__main__":
   sheet_receivers = wb[SHEET_NAME]
   row_count = 6 #sheet_receivers.max_row
 
+  pool = ThreadPoolExecutor()  # max_workers = 5 * Processor by default
   # Send the message via SMTP server.
   for row in range(1, row_count):
     # Get receiver infor
@@ -116,9 +117,9 @@ if __name__ == "__main__":
     email_address = sheet_receivers.cell(row=row, column=COL_EMAIL).value
     if(email_address):
       print("Send email to {} {}".format(name, email_address))
-      send('benjaminhuanghuang@gmail.com', name, htmlContent, textContent, attachmentPart)
-      #send(email_address, name, htmlContent, textContent, attachmentPart)
- 
+      pool.submit(send, 'benjaminhuanghuang@gmail.com', name, htmlContent, textContent, attachmentPart)
+      
+  pool.shutdown()
 
       
 

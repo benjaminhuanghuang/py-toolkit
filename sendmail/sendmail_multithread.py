@@ -1,4 +1,6 @@
 import os
+import time
+import itertools
 import configparser # python 3
 import openpyxl
 # Import smtplib for the actual sending function
@@ -32,29 +34,18 @@ COL_NAME = 1
 COL_EMAIL = 2
 COL_SCORE = 5
 
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 def replaceTemplate(text, name, score):
   return text.replace("#name#", name).replace("#score#", str(score))
 
-
-def send(receiverEmail, recevierName, htmlContent, textContent, attachmentPart):
-  config = configparser.ConfigParser()
-  config.read('config.ini')
-
-  emailAccount = config['DEFAULT']['EMAIL_ACCOUNT']
-  password = config['DEFAULT']['PASSWORD']
-  # print(username, password)
-  
-  # Create a secure SSL context
-  context = ssl.create_default_context()
-  # 465 (SSL required) or 587 (TLS required)
-  with smtplib.SMTP("smtp.gmail.com", 587) as server: 
-    server.ehlo()
-    server.starttls()
-    # Login SMTP server.
-    # Have to enable https://myaccount.google.com/lesssecureapps?pli=1
-    server.login(emailAccount, password)
-
+d = [2, 3, 4,5,6]
+sleep_rotate = itertools.cycle(d)
+def send(server, receiverEmail, recevierName, htmlContent, textContent, attachmentPart):
+  try:
+    status = True
+    print("Send email to {} {}".format(recevierName, receiverEmail))
     mainMessage = MIMEMultipart('mixed')
     mainMessage["Subject"] = config['DEFAULT']['SUBJECT']
     mainMessage["From"] = "{} <{}>".format(config['DEFAULT']['SENDER'],config['DEFAULT']['SENDER_EMAIL'])
@@ -73,9 +64,14 @@ def send(receiverEmail, recevierName, htmlContent, textContent, attachmentPart):
     message.attach(htmlPart)
 
     mainMessage.attach(message)
-    mainMessage.attach(attachmentPart)
+    if attachmentPart:
+      mainMessage.attach(attachmentPart)
 
     server.sendmail(config['DEFAULT']['SENDER_EMAIL'], email_address, mainMessage.as_string())
+  except Exception as e:
+    status = False
+    details = str(e)
+    print(details)
 
 
 if __name__ == "__main__":
@@ -90,36 +86,50 @@ if __name__ == "__main__":
   textFile.close()
 
   # Attachment
-  attachmentPart = MIMEBase("application", "octet-stream")
-   # Open PDF file in binary mode
-  with open(ATTACHMENT, "rb") as attachment:
-    # Add file as application/octet-stream
-    # Email client can usually download this automatically as attachment
-    attachmentPart = MIMEBase("application", "octet-stream")
-    attachmentPart.set_payload(attachment.read())
+  # attachmentPart = MIMEBase("application", "octet-stream")
+  #  # Open PDF file in binary mode
+  # with open(ATTACHMENT, "rb") as attachment:
+  #   # Add file as application/octet-stream
+  #   # Email client can usually download this automatically as attachment
+  #   attachmentPart = MIMEBase("application", "octet-stream")
+  #   attachmentPart.set_payload(attachment.read())
 
-  # Encode file in ASCII characters to send by email    
-  encoders.encode_base64(attachmentPart)
+  # # Encode file in ASCII characters to send by email    
+  # encoders.encode_base64(attachmentPart)
 
-  # Add header as key/value pair to attachment part
-  attachmentPart.add_header('Content-Disposition','attachment', filename=ATTACHMENT)
+  # # Add header as key/value pair to attachment part
+  # attachmentPart.add_header('Content-Disposition','attachment', filename=ATTACHMENT)
   
   # Read receivers
   wb = openpyxl.load_workbook(EXCEL_NAME)
   sheet_receivers = wb[SHEET_NAME]
-  row_count = 6 #sheet_receivers.max_row
+  row_count = sheet_receivers.max_row
 
-  pool = ThreadPoolExecutor()  # max_workers = 5 * Processor by default
-  # Send the message via SMTP server.
-  for row in range(1, row_count):
-    # Get receiver infor
-    name = sheet_receivers.cell(row=row, column=COL_NAME).value
-    email_address = sheet_receivers.cell(row=row, column=COL_EMAIL).value
-    if(email_address):
-      print("Send email to {} {}".format(name, email_address))
-      pool.submit(send, 'benjaminhuanghuang@gmail.com', name, htmlContent, textContent, attachmentPart)
-      
-  pool.shutdown()
+  emailAccount = config['DEFAULT']['EMAIL_ACCOUNT']
+  password = config['DEFAULT']['PASSWORD']
+  # print(username, password)
+  
+  # Create a secure SSL context
+  context = ssl.create_default_context()
+  # 465 (SSL required) or 587 (TLS required)
+  with smtplib.SMTP("smtp.gmail.com", 587) as server:
+    server.ehlo()
+    server.starttls()
+    # Login SMTP server.
+    # Have to enable https://myaccount.google.com/lesssecureapps?pli=1
+    server.login(emailAccount, password)
+
+    with ThreadPoolExecutor() as pool:
+      # Send the message via SMTP server.
+      for row in range(1, 3): #row_count+1
+         # it works when i sleep randomly !!
+        time.sleep(next(sleep_rotate))
+        # Get receiver infor
+        name = sheet_receivers.cell(row=row, column=COL_NAME).value
+        email_address = sheet_receivers.cell(row=row, column=COL_EMAIL).value
+        if(email_address):
+          pool.submit(send, server, email_address, name, htmlContent, textContent, None)
+   
 
       
 

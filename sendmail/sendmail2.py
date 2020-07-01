@@ -108,7 +108,7 @@ if __name__ == "__main__":
   # Read receivers
   wb = openpyxl.load_workbook(EXCEL_NAME)
   sheet_receivers = wb[SHEET_NAME]
-  row_count = 6 #sheet_receivers.max_row
+  row_count = 201 #sheet_receivers.max_row
 
   # Send the message via SMTP server.
   for row in range(1, row_count):

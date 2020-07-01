@@ -1,0 +1,434 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Simple Transactional Email</title>
+  <style>
+    /* -------------------------------------
+          GLOBAL RESETS
+      ------------------------------------- */
+
+    /*All the styling goes here*/
+
+    img {
+      border: none;
+      -ms-interpolation-mode: bicubic;
+      max-width: 100%;
+    }
+
+    body {
+      background-color: #f6f6f6;
+      font-family: sans-serif;
+      -webkit-font-smoothing: antialiased;
+      font-size: 15px;
+      line-height: 1.4;
+      margin: 0;
+      padding: 0;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    table {
+      border-collapse: separate;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+      width: 100%;
+    }
+
+    table td {
+      font-family: sans-serif;
+      font-size: 15px;
+      vertical-align: top;
+    }
+
+    /* -------------------------------------
+          BODY & CONTAINER
+      ------------------------------------- */
+
+    .body {
+      background-color: #f6f6f6;
+      width: 100%;
+    }
+
+    /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
+    .container {
+      display: block;
+      margin: 0 auto !important;
+      /* makes it centered */
+      max-width: 580px;
+      padding: 10px;
+      width: 580px;
+    }
+
+    /* This should also be a block element, so that it will fill 100% of the .container */
+    .content {
+      box-sizing: border-box;
+      display: block;
+      margin: 0 auto;
+      max-width:800px;
+      padding: 10px;
+    }
+
+    /* -------------------------------------
+          HEADER, FOOTER, MAIN
+      ------------------------------------- */
+    .main {
+      background: #ffffff;
+      border-radius: 3px;
+      width: 100%;
+    }
+
+    .wrapper {
+      box-sizing: border-box;
+      padding: 20px;
+    }
+
+    .content-block {
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+
+    .footer {
+      clear: both;
+      margin-top: 10px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .footer td,
+    .footer p,
+    .footer span,
+    .footer a {
+      color: #999999;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* -------------------------------------
+          TYPOGRAPHY
+      ------------------------------------- */
+    h1,
+    h2,
+    h3,
+    h4 {
+      color: #000000;
+      font-family: sans-serif;
+      font-weight: 400;
+      line-height: 1.4;
+      margin: 0;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 35px;
+      font-weight: 300;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    p,
+    ul,
+    ol {
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0;
+      margin-bottom: 15px;
+    }
+
+    p li,
+    ul li,
+    ol li {
+      list-style-position: inside;
+      margin-left: 5px;
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: underline;
+    }
+
+    /* -------------------------------------
+          BUTTONS
+      ------------------------------------- */
+    .btn {
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .btn>tbody>tr>td {
+      padding-bottom: 15px;
+    }
+
+    .btn table {
+      width: auto;
+    }
+
+    .btn table td {
+      background-color: #ffffff;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .btn a {
+      background-color: #ffffff;
+      border: solid 1px #3498db;
+      border-radius: 5px;
+      box-sizing: border-box;
+      color: #3498db;
+      cursor: pointer;
+      display: inline-block;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0;
+      padding: 12px 25px;
+      text-decoration: none;
+      text-transform: capitalize;
+    }
+
+    .btn-primary table td {
+      background-color: #3498db;
+    }
+
+    .btn-primary a {
+      background-color: #3498db;
+      border-color: #3498db;
+      color: #ffffff;
+    }
+
+    /* -------------------------------------
+          OTHER STYLES THAT MIGHT BE USEFUL
+      ------------------------------------- */
+    .last {
+      margin-bottom: 0;
+    }
+
+    .first {
+      margin-top: 0;
+    }
+
+    .align-center {
+      text-align: center;
+    }
+
+    .align-right {
+      text-align: right;
+    }
+
+    .align-left {
+      text-align: left;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    .mt0 {
+      margin-top: 0;
+    }
+
+    .mb0 {
+      margin-bottom: 0;
+    }
+
+    .preheader {
+      color: transparent;
+      display: none;
+      height: 0;
+      max-height: 0;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      mso-hide: all;
+      visibility: hidden;
+      width: 0;
+    }
+
+    .powered-by a {
+      text-decoration: none;
+    }
+
+    hr {
+      border: 0;
+      border-bottom: 1px solid #f6f6f6;
+      margin: 20px 0;
+    }
+
+    /* -------------------------------------
+          RESPONSIVE AND MOBILE FRIENDLY STYLES
+      ------------------------------------- */
+    @media only screen and (max-width: 620px) {
+      table[class=body] h1 {
+        font-size: 28px !important;
+        margin-bottom: 10px !important;
+      }
+
+      table[class=body] p,
+      table[class=body] ul,
+      table[class=body] ol,
+      table[class=body] td,
+      table[class=body] span,
+      table[class=body] a {
+        font-size: 16px !important;
+      }
+
+      table[class=body] .wrapper,
+      table[class=body] .article {
+        padding: 10px !important;
+      }
+
+      table[class=body] .content {
+        padding: 0 !important;
+      }
+
+      table[class=body] .container {
+        padding: 0 !important;
+        width: 100% !important;
+      }
+
+      table[class=body] .main {
+        border-left-width: 0 !important;
+        border-radius: 0 !important;
+        border-right-width: 0 !important;
+      }
+
+      table[class=body] .btn table {
+        width: 100% !important;
+      }
+
+      table[class=body] .btn a {
+        width: 100% !important;
+      }
+
+      table[class=body] .img-responsive {
+        height: auto !important;
+        max-width: 100% !important;
+        width: auto !important;
+      }
+    }
+
+    /* -------------------------------------
+          PRESERVE THESE STYLES IN THE HEAD
+      ------------------------------------- */
+    @media all {
+      .ExternalClass {
+        width: 100%;
+      }
+
+      .ExternalClass,
+      .ExternalClass p,
+      .ExternalClass span,
+      .ExternalClass font,
+      .ExternalClass td,
+      .ExternalClass div {
+        line-height: 100%;
+      }
+
+      .apple-link a {
+        color: inherit !important;
+        font-family: inherit !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        line-height: inherit !important;
+        text-decoration: none !important;
+      }
+
+      #MessageViewBody a {
+        color: inherit;
+        text-decoration: none;
+        font-size: inherit;
+        font-family: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+      }
+
+      .btn-primary table td:hover {
+        background-color: #34495e !important;
+      }
+
+      .btn-primary a:hover {
+        background-color: #34495e !important;
+        border-color: #34495e !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+    <tr>
+      <td>
+        <div class="content">
+
+          <!-- START CENTERED WHITE CONTAINER -->
+          <table role="presentation" class="main">
+
+            <!-- START MAIN CONTENT AREA -->
+            <tr>
+              <td class="wrapper">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="font-size: 20px;text-align:center">香柏木培訓中心</td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 19px;font-weight: bold; text-align:center">錄取通知</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>親愛的#name#弟兄/姊妹：平安！</p>
+                      <p style="text-indent:2em;">
+                        感謝您在2020年申請『香柏木培训中心』，也感謝您的耐心等候。每逢招生之際，面对如此多的弟兄姐妹，能夠在今天這個忙碌的世代，有心在真道上付代價，被装备，實在是非常的寶貝，也讓柏训老師們非常的感动。因為申請者人數众多、且素質逐年提高，招生小組經過多日的慎重審核、禱告、交通，經過初審、聯合複審及部分個別電話面試，感謝主，產生了最終的審核結果。
+                      </p>
+                      <p style="text-indent:2em;">我們非常高興地通知您：您被錄取為『香柏木培訓中心』2020級學員，歡迎您加入柏訓的大家庭</p>
+                      <p style="text-indent:2em;">
+                        由於柏訓目前的服事力量有限，採用寬進嚴出的方式，因此會从第一学期就嚴格淘汰不認真學習的學員，請慎重禱告、並回信告知，願意遵守《香柏木培訓中心校規》的所有規則，才會正式被接受為柏訓的學員。請您珍惜此次機會，認真學習，成為目前所在教會及周圍人的祝福，並一起為
+                        神國效力！！</p>
+
+                      <p>願 神祝福您！</p>
+                      <p>香柏木培訓中心』招生小組</p>
+                      <p>2020年6月30日</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="wrapper">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="color: #0033FF;">
+                  <tr>
+                    <td>
+                      <p style="font-weight: bold;">在正式學習之前，請注意閱讀以下重要事項：</p>
+                      <ol>
+                        <li>
+                          附件為《香柏木培訓中心校規》，請下載後仔細閱讀，如果您同意嚴格遵守《校規》所有規則的，<span
+                            style="color: red;text-decoration: underline;text-decoration-color: red;">請在7月15日前回复此郵件，在信件内容里聲明：『同意遵守柏訓校規』，並寫上您的名字和日期；</span>收到您的回函後，柏訓將於7月25日前將您的柏訓帳號信息發送至您的個人郵箱，請屆時注意查收郵件。
+                        </li>
+                        <ul>
+                          <li>如果您無法遵守《校規》的，請回复此郵件告知無法遵守，如此就代表你自願放棄加入柏訓。千萬不要勉強或敷衍，更不要帶著試試看的心態，因為我們招生有限，空出來的名額可以讓其他有心的聖徒參加。</li>
+                          <li>如果7月15日沒有回復此郵件，將被視作自動放棄。</li>
+                          <li>如果您目前正在任何的培訓機構或神學院參加長期的學習，請來信告知。我們的原則是希望學員能專心學習，不要同時參加不同的培訓計劃。因此，我們會建議你把名額先讓給別人，將來再加入柏訓的學習。</li>
+                        </ul>
+                        <li>2020-2021年學年秋季課程於8月22日開始網上註冊選課，2019年9月1日正式開學。</li>
+                        <li>「柏訓」財務的來源是由學員自由奉獻。由於學員數量的逐年增加，2020年的預算(包括矽谷基督徒聚會以外的老師費用，全職行政同工，及網站維護、電腦伺服器等費用)
+                          約為美金十四萬元。場地、器材、水電、保險等費用及電腦、影音義工都由矽谷基督徒聚會承擔。這已是在北美一個培訓中心最簡省的花費。我們各方面的力量都夠不上禾場這麼大的需要。請您為「柏訓」的老師及同工們代禱， 使我們可以隨著「柏訓」的成長而更多被主使用。
+                        </li>
+                      </ol>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- END MAIN CONTENT AREA -->
+          </table>
+          <!-- END CENTERED WHITE CONTAINER -->
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>
